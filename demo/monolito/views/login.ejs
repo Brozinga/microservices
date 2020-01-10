@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include ./imports/header.ejs %>
+    <title>Login</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-md-4 offset-md-4">
+                <h1 class="text-center login-title"><strong>ToDo App</strong></h1>
+                <div class="account-wall">
+                    <form class="form-signin" method="post" action="/todo" class="form-control">
+                        <input type="text" name="login" class="form-control" id="form-login" placeholder="Email"
+                            required autofocus>
+                        <br>
+                        <input type="password" name="password" class="form-control" id="form-password"
+                            placeholder="Password" required>
+                        <br>
+                        <input type="submit" value="Entrar" class="btn btn-lg btn-primary btn-block" />
+                    </form>
+                </div>
+                <br>
+                <% if (error.status) { %>
+                <div class="alert alert-<%= error.type %>" role="alert">
+                    <%= error.message %>
+                </div>
+                <% } %>
+
+                <% if( login ) { %>
+                <script>window.location.href = "/todo"</script>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</body>
+<%- include ./imports/footer.ejs %>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include ./imports/header.ejs %>
+    <title>ToDo</title>
+</head>
+
+<body>
+    <div class="container">
+        <form method="POST" action="/todo-add" class="form-inline">
+            <input type="hidden" id="id" name="id" value="<%= result[0].Id %>">
+            <input type="text" name="tarefa" class="form-control col-sm-4 offset-sm-4"
+                placeholder="insira a sua tarefa .." style="margin-right: 10px;">
+            <button type="submit" class="btn btn-primary"> + </button>
+        </form>
+    </div>
+
+    <div class="container">
+        <% if(todos.length) { %>
+        <div style="margin-top: 20px;">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" width="100px">#</th>
+                        <th scope="col">Tarefa</th>
+                        <th scope="col" width="100px">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (let item of todos) { %>
+                    <tr>
+                        <th scope="row"><%= item.id %></th>
+                        <td><%= item.tarefa %></td>
+                        <td>
+                            <form action="/todo-delete" method="POST">
+                                <input type="hidden" value="<%= item.id %>" name="item">
+                                <input type="hidden" value="<%= result[0].Id %>" name="id">
+                                <button type="submit" class="btn btn-danger">Deletar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+        <% } else { %>
+        <br>
+        <br>
+        <h2 style="text-align: center;">Não existem tarefas associadas!</h2>
+        <% } %>
+    </div>
+</body>
+<%- include ./imports/footer.ejs %>
+
+</html>
