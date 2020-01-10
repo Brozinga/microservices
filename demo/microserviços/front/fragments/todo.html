@@ -1,0 +1,133 @@
+<script>
+
+    if (!sessionStorage.getItem("token")) {
+        $("#app").load("./login.html");
+    }
+</script>
+
+<br>
+<br>
+<div class="container">
+    <button class="btn btn-success sair">
+        Sair
+    </button>
+
+    <form id="todo-form" class="form-inline">
+        <input type="text" id="tarefa" name="tarefa" required class="form-control col-sm-4 offset-sm-4"
+            placeholder="insira a sua tarefa .." style="margin-right: 10px;">
+        <button type="submit" class="btn btn-primary add"> + </button>
+    </form>
+</div>
+
+<div class="container">
+    <div style="margin-top: 20px; display: none;" class="table-container">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col" width="100px">#</th>
+                    <th scope="col">Tarefa</th>
+                    <th scope="col" width="100px">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <br>
+    <div class="error" style="text-align: center; display: none;">
+        <h2>Não há tarefas na Lista</h2>
+    </div>
+</div>
+<script>
+
+    let UserId = JSON.parse(sessionStorage.getItem("token"))[0].Id;
+
+    function DeletarItem(id) {
+        $.ajax({
+            type: "DELETE",
+            url: `http://localhost:1000/todo/${id}`,
+            success: data => {
+                console.log(data);
+                PegarTarefas(UserId);
+            }
+        });
+
+    }
+
+    function PegarTarefas(id) {
+
+        $.ajax({
+            type: "GET",
+            url: `http://localhost:1000/todo/${id}`,
+            success: data => {
+                montagemTabela(data);
+            }
+        });
+    }
+
+
+    function montagemTabela(dados) {
+        let result = '';
+
+
+        $(".error").hide();
+        $(".table-container").hide();
+
+        if (dados.length) {
+            $(".table-container").show();
+            for (let item of dados) {
+
+                let tr = `<tr>
+                    <th scope="row">${item.id}</th>
+                    <td>${item.tarefa}</td>
+                    <td>
+                        <button type="submit" class="btn btn-danger" onclick="DeletarItem(${item.id})">Deletar</button>
+                        </td>
+                        </tr>`;
+                console.log(tr);
+                result += tr;
+            }
+
+            $(".table-bordered tbody").html(result);
+            return;
+        }
+
+
+        $(".error").show();
+    }
+
+
+    $(document).ready(() => {
+
+        $(".sair").click(e => {
+            sessionStorage.removeItem("token");
+            window.location.href = "/";
+        })
+
+        PegarTarefas(UserId);
+
+        $("#todo-form").submit((e) => {
+            e.preventDefault();
+
+            $.ajax({
+                type: "POST",
+                url: `http://localhost:1000/todo`,
+                data: {
+                    user_id: UserId,
+                    tarefa: $('#todo-form > #tarefa').val()
+                },
+                success: data => {
+                    console.log(data);
+                    PegarTarefas(UserId);
+                    $('#todo-form > #tarefa').val('')
+                }
+            });
+
+        })
+
+    })
+
+
+</script>
